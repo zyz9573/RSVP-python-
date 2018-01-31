@@ -1,0 +1,31 @@
+
+
+{% extends 'event/base.html' %}
+{% block body %}
+    {% if all_events %}
+        <h3> Here are all my events:</h3>
+    <ul>
+        {% for event in all_events %}
+        <li><a href="{% url 'event:detail' event.id %}">{{ event.event_title }}</a></li>
+        <form action="{% url 'event:event-delete' event.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="event_id" value="{{ event.id }}"/>
+        <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-trash"></span>
+        </button>
+        </form>
+
+            <form action="{% url 'event:event-update' event.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="event_id" value="{{ event.id }}"/>
+        <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-pencil"></span>
+        </button>
+        </form>
+
+        {% endfor %}
+    </ul>
+    {% else %}
+        <h3> You don't have any events</h3>
+    {% endif %}
+{% endblock %}
