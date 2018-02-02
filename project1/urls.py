@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path
-
+from users import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('event/',include('event.urls')),
+    path('users/', include('users.urls')),
+    path('users/', include('django.contrib.auth.urls')),#built-in login change-password find-password view function
+    path('',views.index,name='index'),
 ]
