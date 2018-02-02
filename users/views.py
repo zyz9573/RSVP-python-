@@ -20,5 +20,6 @@ def index(request):
     return render(request,'index.html')
 
 def detail(request,pk):
-    yonghu = user.objects.get(id = pk)
-    return HttpResponse(yonghu.username)
+    yonghu = realuser.objects.get(id = pk)
+    return render(request,'users/realuser.html',context={'user_info':yonghu})#HttpResponse(yonghu.username)
+
