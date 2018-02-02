@@ -20,6 +20,9 @@ def index(request):
     return render(request,'index.html')
 
 def detail(request,pk):
-    yonghu = realuser.objects.get(id = pk)
-    return render(request,'users/realuser.html',context={'user_info':yonghu})#HttpResponse(yonghu.username)
+    if not request.user.is_authenticated:
+        return render(request,'index.html')
+    else:
+        yonghu = realuser.objects.get(id = pk)
+        return render(request,'users/realuser.html',context={'user_info':yonghu})#HttpResponse(yonghu.username)
 

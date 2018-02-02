@@ -1,13 +1,18 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
+#from users.models import realuser
 # Create your models here.
 class Event(models.Model):
     time = models.CharField(max_length=250)
     event_title = models.CharField(max_length=500)
     place = models.CharField(max_length=100)
     event_infor = models.CharField(max_length=1000)
-    event_logo = models.CharField(max_length=1000)
-
+    event_logo = models.CharField(max_length=1000,blank=True)
+    #created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    #event_owner = models.ManyToManyField(realuser,related_name='event_owner')
+    #event_vendor = models.ManyToManyField(realuser,related_name='event_vendor')
+    #event_guest = models.ManyToManyField(realuser,related_name='event_guest')
     def get_absolute_url(self):
         return reverse('event:detail',kwargs={'pk':self.pk})
 

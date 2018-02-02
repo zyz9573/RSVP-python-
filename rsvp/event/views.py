@@ -6,7 +6,7 @@ from .models import Event,Question
 from django.views import generic
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
-
+from .form import EventForm
 class IndexView(generic.ListView):
     template_name = 'event/index.html'
     context_object_name ='all_events'
@@ -31,7 +31,10 @@ def answer(request,event_id):
 class EventCreate(CreateView):
     model = Event
     fields = ['time','event_title','place','event_infor','event_logo']
-    
+
+    def form_valid(self,form):
+        form.instance.created_by = self.request.user
+        return super().form.valid(form)
 
 class EventDelete(DeleteView):
     model =Event
@@ -45,4 +48,19 @@ from users.models import realuser
 def event_view(request):
     pk = request.GET.get('p1')
     yonghu = realuser.objects.get(id = pk)
-    return HttpResponse("this is "+yonghu.username)
+    jihe = yonghu.owner_event.all()
+    return render(request,'event/myevent.html',context={'jihe':jihe})#HttpResponse("this is "+yonghu.username)
+
+def event_add(request):
+    pk = request.GET.get('p1')
+    yonghu = realuser.objects.get(id = pk)
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            shijian = Event.objects.get(place = request.POST.get('place'))
+            yonghu.owner_event.add(shijian);
+            return render(request,'users/realuser.html',context={'user_info':yonghu})
+    else:
+        form = EventForm()
+        return render(request,'event/addevent.html',context={'form':form,'user_info':yonghu})
