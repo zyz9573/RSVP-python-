@@ -18,9 +18,15 @@ class DetailView(generic.DetailView):
     model = Event
     template_name='event/detail.html'
 
-def answer(reques):
-
-    return
+def answer(request,event_id):
+    if request.method == "POST":
+        event = get_object_or_404(Event,pk = event_id)
+        for question in event.question_set.all():
+            question.question_answer = request.POST['question']
+            question.save()
+        return HttpResponse("Successfull add your answer!")
+    else:
+        return HttpResponse("Fail to add your answer")
 
 class EventCreate(CreateView):
     model = Event
