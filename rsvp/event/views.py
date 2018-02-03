@@ -48,8 +48,10 @@ from users.models import realuser
 def event_view(request):
     pk = request.GET.get('p1')
     yonghu = realuser.objects.get(id = pk)
-    jihe = yonghu.owner_event.all()
-    return render(request,'event/myevent.html',context={'jihe':jihe})#HttpResponse("this is "+yonghu.username)
+    as_owner = yonghu.owner_event.all()
+    as_vendor = yonghu.vendor_event.all()
+    as_guest = yonghu.guest_event.all()
+    return render(request,'event/myevent.html',context={'as_owner':as_owner,'as_vendor':as_vendor,'as_guest':as_guest,'user':pk})#HttpResponse("this is "+yonghu.username)
 
 def event_add(request):
     pk = request.GET.get('p1')
@@ -58,9 +60,46 @@ def event_add(request):
         form = EventForm(request.POST)
         if form.is_valid():
             form.save()
-            shijian = Event.objects.get(place = request.POST.get('place'))
-            yonghu.owner_event.add(shijian);
+            shijian = Event.objects.get(time = request.POST.get('time'))
+            yonghu.owner_event.add(shijian)
             return render(request,'users/realuser.html',context={'user_info':yonghu})
     else:
         form = EventForm()
         return render(request,'event/addevent.html',context={'form':form,'user_info':yonghu})
+
+def event_detail(request):
+    pk = request.GET.get('p2')
+    shijian = Event.objects.get(id = pk)
+    pku = request.GET.get('p1')
+    yonghu = realuser.objects.get(id =pku)
+    return render(request,'event/eventdetail.html',context={'event_info':shijian,'user':yonghu})
+
+def inviteowner(request):
+    pk = request.GET.get('p1')
+    if request.method=='POST':
+        shijian = Event.objects.get(id = pk)
+        yonghu = realuser.objects.get(username = request.POST['invite_username'])
+        yonghu.owner_event.add(shijian)
+        return render(request,'event/eventdetail.html',context={'event_info':shijian})
+    else:
+        return render(request,'event/inviteowner.html',context={'id':pk})
+
+def invitevendor(request):
+    pk = request.GET.get('p1')
+    if request.method=='POST':
+        shijian = Event.objects.get(id = pk)
+        yonghu = realuser.objects.get(username = request.POST['invite_username'])
+        yonghu.vendor_event.add(shijian)
+        return render(request,'event/eventdetail.html',context={'event_info':shijian})
+    else:
+        return render(request,'event/invitevendor.html',context={'id':pk})
+
+def inviteguest(request):
+    pk = request.GET.get('p1')
+    if request.method=='POST':
+        shijian = Event.objects.get(id = pk)
+        yonghu = realuser.objects.get(username = request.POST['invite_username'])
+        yonghu.guest_event.add(shijian)
+        return render(request,'event/eventdetail.html',context={'event_info':shijian})
+    else:
+        return render(request,'event/inviteguest.html',context={'id':pk})

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Register</title>
+    <title>My Event</title>
     <link rel="stylesheet" href="https://unpkg.com/mobi.css/dist/mobi.min.css">
     <style>
       .errorlist {
@@ -13,7 +13,19 @@
     </style>
   </head>
   <body>
-  {% for event in jihe %}
-  {{event.event_title}}
+  <p>as_owner
+  {% for evento in as_owner %}
+  <a href = "/event/eventdetail/?p1={{user}}&p2={{evento.id}}">{{evento.event_title}}</a>
   {% endfor %}
+  </p>
+  <p>as_vendor
+  {% for eventv in as_vendor %}
+  <a href = "/event/eventdetail/?p1={{user}}&p2={{eventv.id}}">{{eventv.event_title}}</a>
+  {% endfor %}
+  </p>
+  <p>as_guest
+  {% for eventg in as_guest %}
+  <a href = "/event/eventdetail/?p1={{user}}&p2={{eventg.id}}">{{eventg.event_title}}</a>
+  {% endfor %}
+  </p>
   </body>
