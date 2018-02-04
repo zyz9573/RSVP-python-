@@ -12,6 +12,7 @@
       }
     </style>
   </head>
+
   <body>
   <p>TITLE:{{event_info.event_title}}</p>
   <p>TIME:{{event_info.time}}</p>
@@ -21,4 +22,5 @@
   <a href='/event/inviteowner/?p1={{event_info.id}}'>invite user to be owner</a>
   <a href='/event/invitevendor/?p1={{event_info.id}}'>invite user to be vendor</a>
   <a href='/event/inviteguest/?p1={{event_info.id}}'>invite user to be guest</a>
+  <a href='/event/editquestion/?p1={{event_info.id}}' class="button">Edit Question</a>
   </body>

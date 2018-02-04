@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Question</title>
+    <link rel="stylesheet" href="https://unpkg.com/mobi.css/dist/mobi.min.css">
+    <style>
+      .errorlist {
+      color: red;
+      }
+    </style>
+  </head>
+  <body>
+    {% if event.question_set %}
+    <ul>
+    {% for question in event.question_set.all %}
+           <li> {{question.question_content}} </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    <h3>New Question's Type:</h3>
+    <a href="/event/add_one/?p1={{event_info.id}}" class="button">Multiple Choice</a>
+    <a href="/event/add_two/?p1={{event_info.id}}" class="button">Test Response</a>
+ </body>

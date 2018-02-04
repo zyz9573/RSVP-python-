@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
-from .models import Event,Question
+from .models import Event,Question,QuestionMultiple
 from django.views import generic
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
@@ -103,3 +103,71 @@ def inviteguest(request):
         return render(request,'event/eventdetail.html',context={'event_info':shijian})
     else:
         return render(request,'event/inviteguest.html',context={'id':pk})
+
+def editQuestion(request):
+    pk = request.GET.get('p1')
+    shijian = Event.objects.get(id=pk)
+    return render(request, 'event/editQuestion.html', context={'event_info': shijian})
+
+
+def addQuestion(request):
+    pk = request.GET.get('p1')
+    if request.method == "POST":
+        event = Event.objects.get(id = pk)
+        A = Question()
+        A.question_content = request.POST['question']
+        A.question_answer = ''
+        A.Event = event
+        A.save()
+        return HttpResponse("Successfull add your question!")
+    else:
+        return HttpResponse("Fail to add your question")
+
+def addMultiple(request):
+    pk = request.GET.get('p1')
+    event = Event.objects.get(id = pk)
+    A = QuestionMultiple()
+    A.question_content = ''
+    A.Event = event
+    A.Choice = []
+    A.save()
+    return render(request, 'event/addMultiple.html', context={'event_info':event,'question' : A})
+
+def addText(request):
+    pk = request.GET.get('p1')
+    shijian = Event.objects.get(id=pk)
+    pku = request.GET.get('p1')
+    yonghu = realuser.objects.get(id=pku)
+    return render(request, 'event/addText.html', context={'event_info': shijian, 'user': yonghu})
+
+def addOption(request):
+    pk1 = request.GET.get('p1')
+    pk2 = request.GET.get('p2')
+    shijian = Event.objects.get(id = pk1)
+    question = QuestionMultiple.objects.get(id = pk2)
+    return render(request, 'event/addOption.html', context={'event_info': shijian, 'question' : question})
+
+def addOptionA(request):
+    pk1 = request.GET.get('p1')
+    pk2 = request.GET.get('p2')
+    if request.method == "POST":
+        event = Event.objects.get(id = pk1)
+        A = QuestionMultiple.objects.get(id = pk2)
+        A.Choice.append(request.POST['option'])
+        A.save()
+        return render(request, 'event/addMultiple.html', context={'event_info': event, 'question' : A})
+    else:
+        return HttpResponse("Fail to add your question")
+
+def addMultipleChoice(request):
+    pk1 = request.GET.get('p1')
+    pk2 = request.GET.get('p2')
+    if request.method == "POST":
+        event = Event.objects.get(id=pk1)
+        A = QuestionMultiple.objects.get(id = pk2)
+        A.question_content = request.POST['question']
+        A.Event = event
+        A.save()
+        return HttpResponse("Successfull add your question!")
+    else:
+        return HttpResponse("Fail to add your question")
