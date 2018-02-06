@@ -11,6 +11,17 @@
       color: red;
       }
     </style>
+
+    <meta charset="UTF-8">
+    <title>{% block title %} Activities{% endblock %}</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'event/style.css' %}" />
+
+
   </head>
 
   <body>
@@ -21,6 +32,42 @@
   <a href='/users/{{user.id}}'>{{user.username}}</a>  
   <a href='/event/inviteowner/?p1={{event_info.id}}'>invite user to be owner</a>
   <a href='/event/invitevendor/?p1={{event_info.id}}'>invite user to be vendor</a>
-  <a href='/event/inviteguest/?p1={{event_info.id}}'>invite user to be guest</a>
-  <a href='/event/editquestion/?p1={{event_info.id}}' class="button">Edit Question</a>
+  <a href='/event/inviteguest/?p1={{event_info.id}}'>invite user to be guest</a><br>
+  <a href='/event/editquestion/?p1={{event_info.id}}' class="button">Add New Question</a><br>
+  <h2> Question </h2>
+  {% for textquestion in event_info.question_set.all %}
+        {{ textquestion.question_content }}
+        <form action='/event/question_delete/?p1={{ event_info.id }}&p2={{  textquestion.id}}' method="post" >
+        {% csrf_token %}
+        <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-trash"></span>
+        </button>
+        </form>
+       <form action='/event/question_update/?p1={{ event_info.id }}&p2={{  textquestion.id}}' method="post" style="display:inline;">
+        {% csrf_token %}
+           <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-pencil"></span>
+           </button><br>
+        </form>
+  {% endfor %}
+  {% for multiquestion in event_info.questionmultiple_set.all %}
+   {{  multiquestion.question_content }}<br>
+       <form action='/event/multiplequestion_delete/?p1={{ event_info.id }}&p2={{  multiquestion.id}}' method="post" >
+        {% csrf_token %}
+        <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-trash"></span>
+        </button>
+        </form>
+      <form action='/event/multiplequestion_update/?p1={{ event_info.id }}&p2={{  multiquestion.id}}' method="post" style="display:inline;">
+        {% csrf_token %}
+           <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-pencil"></span>
+           </button><br>
+        </form>
+      {% for options in multiquestion.Choice %}
+          <ul>
+          {{ options }}<br>
+          </ul>>
+      {% endfor %}
+   {% endfor %}
   </body>

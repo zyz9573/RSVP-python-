@@ -110,18 +110,7 @@ def editQuestion(request):
     return render(request, 'event/editQuestion.html', context={'event_info': shijian})
 
 
-def addQuestion(request):
-    pk = request.GET.get('p1')
-    if request.method == "POST":
-        event = Event.objects.get(id = pk)
-        A = Question()
-        A.question_content = request.POST['question']
-        A.question_answer = ''
-        A.Event = event
-        A.save()
-        return HttpResponse("Successfull add your question!")
-    else:
-        return HttpResponse("Fail to add your question")
+
 
 def addMultiple(request):
     pk = request.GET.get('p1')
@@ -138,22 +127,47 @@ def addText(request):
     shijian = Event.objects.get(id=pk)
     pku = request.GET.get('p1')
     yonghu = realuser.objects.get(id=pku)
-    return render(request, 'event/addText.html', context={'event_info': shijian, 'user': yonghu})
+    A = Question()
+    A.question_content = ''
+    A.question_answer = ''
+    A.Event = shijian
+    A.save()
+    return render(request, 'event/addText.html', context={'event_info': shijian, 'question': A })
 
-def addOption(request):
+def addQuestion(request):
+    pk2 = request.GET.get('p2')
+    if request.method == "POST":
+        A = Question.objects.get(id = pk2)
+        A.question_content = request.POST['question']
+        A.save()
+        return HttpResponse("Successfull add your question!")
+    else:
+        return HttpResponse("Fail to add your question")
+
+def addOption(request):                #used for going to add options page
     pk1 = request.GET.get('p1')
     pk2 = request.GET.get('p2')
+    pk3 = request.GET.get('p3')
     shijian = Event.objects.get(id = pk1)
-    question = QuestionMultiple.objects.get(id = pk2)
-    return render(request, 'event/addOption.html', context={'event_info': shijian, 'question' : question})
+    A = QuestionMultiple.objects.get(id = pk2)
+    if pk3 == A.Choice.size():
+        option = ''
+    else:
+        option = pk3
 
-def addOptionA(request):
+    return render(request, 'event/addOption.html', context={'event_info': shijian, 'question' : A,'option': option})
+
+def addOptionA(request):             #used for add options' submit
     pk1 = request.GET.get('p1')
     pk2 = request.GET.get('p2')
+    pk3 = request.GET.get('p3')
     if request.method == "POST":
         event = Event.objects.get(id = pk1)
         A = QuestionMultiple.objects.get(id = pk2)
-        A.Choice.append(request.POST['option'])
+        if pk3 == A.Choice.size():
+            A.Choice.append(request.POST['option'])
+        else:
+            A.Choice[pk3]=(request.POST['option'])
         A.save()
         return render(request, 'event/addMultiple.html', context={'event_info': event, 'question' : A})
     else:
@@ -171,3 +185,39 @@ def addMultipleChoice(request):
         return HttpResponse("Successfull add your question!")
     else:
         return HttpResponse("Fail to add your question")
+
+def deleteQuestion(request):
+    pk1 = request.GET.get('p1')
+    pk2 = request.GET.get('p2')
+    if request.method == "POST":
+        event = Event.objects.get(id=pk1)
+        A = Question.objects.get(id=pk2)
+        A.delete()
+        return HttpResponse("Successfully delete your question")
+    else:
+        return HttpResponse("Fail to delete your question")
+
+def deleteMultipleQuestion(request):
+    pk1 = request.GET.get('p1')
+    pk2 = request.GET.get('p2')
+    if request.method == "POST":
+        event = Event.objects.get(id=pk1)
+        A = QuestionMultiple.objects.get(id=pk2)
+        A.delete()
+        return HttpResponse("Successfully delete your question")
+    else:
+        return HttpResponse("Fail to delete your question")
+
+def updateQuestion(request):
+    pk1 = request.GET.get('p1')
+    event = Event.objects.get(id=pk1)
+    pk2 = request.GET.get('p2')
+    question = Question.objects.get(id=pk2)
+    return render(request, 'event/addText.html', context={'event': event, 'question':question})
+
+def updateMultipleQuestion(request):
+    pk1 = request.GET.get('p1')
+    event = Event.objects.get(id=pk1)
+    pk2 = request.GET.get('p2')
+    question = QuestionMultiple.objects.get(id=pk2)
+    return render(request, 'event/addMultiple.html', context={'event': event, 'question': question})

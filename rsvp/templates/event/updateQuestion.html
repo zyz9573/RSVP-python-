@@ -13,14 +13,5 @@
     </style>
   </head>
   <body>
-    {% if event.question_set %}
-    <ul>
-    {% for question in event.question_set.all %}
-           <li> {{question.question_content}} </li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-    <h3>New Question's Type:</h3>
-    <a href="/event/add_one/?p1={{event_info.id}}" class="button">Multiple Choice</a><br>
-    <a href="/event/add_two/?p1={{event_info.id}}" class="button">Test Response</a>
- </body>
+
+  </body>>

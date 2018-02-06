@@ -14,9 +14,10 @@
   </head>
 
   <body>
-     <form action='/event/addquestion/?p1={{event_info.id}}' method="post">
+     <form action='/event/addquestion/?p1={{event_info.id}}&p2={{ question.id }}' method="post">
      {% csrf_token %}
-            Question: <input type="text" name="question"><br>
+            Question: <input type="text" name="question" value="{{question.question_content}}"><br>
         <input type ="submit" value="Submit"><br>
      </form>
   </body>
+

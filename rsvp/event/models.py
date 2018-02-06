@@ -23,7 +23,7 @@ class Event(models.Model):
 
 class Question(models.Model):
     Event = models.ForeignKey(Event,on_delete=models.CASCADE)
-    question_content = models.CharField(max_length=10)
+    question_content = models.CharField(max_length=1000)
     question_answer = models.CharField(max_length=1000)
     is_favorite = models.BooleanField(default = False)
     def __str__(self):
@@ -33,5 +33,6 @@ class QuestionMultiple(models.Model):
     Event = models.ForeignKey(Event, on_delete=models.CASCADE)
     question_content = models.CharField(max_length=1000)
     Choice = ArrayField(ArrayField( models.CharField(max_length=1000, blank=True)))
+    #Choice  = text[][]
     def __str__(self):
         return self.question_content
