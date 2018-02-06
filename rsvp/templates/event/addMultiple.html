@@ -16,10 +16,10 @@
      <form action='/event/addmultiplequestion/?p1={{event_info.id}}&p2={{question.id}}' method="post">
      {% csrf_token %}
             Question: <input type="text" name="question" value="{{ question.question_content }}"><br>
-            {% for options in question.Choice %}
-             <li><a href="/event/add_option/?p1={{ event_info.id }}&p2={{question.id}}&p3= {{}}">{{ options }}</a></li>
+            {% for options in question.options_set.all %}
+             <li><a href="/event/add_option/?p1={{ event_info.id }}&p2={{question.id}}&p3={{options.id}}">{{ options.option_content }}</a></li>
              {% endfor %}
-            <a href="/event/add_option/?p1={{ event_info.id }}&p2={{question.id}}&p3={{ question.Choice.size }}" class="button">Add Option</a>
+            <a href="/event/add_option/?p1={{ event_info.id }}&p2={{question.id}}&p3={{0}} " class="button">Add Option</a>
         <input type ="submit" value="Submit"><br>
      </form>
 </body>

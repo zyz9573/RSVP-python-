@@ -58,15 +58,15 @@
             <span class="glyphicon glyphicon-trash"></span>
         </button>
         </form>
-      <form action='/event/multiplequestion_update/?p1={{ event_info.id }}&p2={{  multiquestion.id}}' method="post" style="display:inline;">
+      <form action='/event/multiplequestion_update/?p1={{ event_info.id }}&p2={{ multiquestion.id}}' method="post" style="display:inline;">
         {% csrf_token %}
            <button type="submit" class="btn btn-default btn-sm">
             <span class="glyphicon glyphicon-pencil"></span>
            </button><br>
         </form>
-      {% for options in multiquestion.Choice %}
+      {% for options in multiquestion.options_set.all %}
           <ul>
-          {{ options }}<br>
+          {{ options.option_content }}<br>
           </ul>>
       {% endfor %}
    {% endfor %}

@@ -32,7 +32,14 @@ class Question(models.Model):
 class QuestionMultiple(models.Model):
     Event = models.ForeignKey(Event, on_delete=models.CASCADE)
     question_content = models.CharField(max_length=1000)
-    Choice = ArrayField(ArrayField( models.CharField(max_length=1000, blank=True)))
+    #Choice = ArrayField(ArrayField( models.CharField(max_length=1000, blank=True)))
     #Choice  = text[][]
     def __str__(self):
         return self.question_content
+
+class Options(models.Model):
+    Multiple = models.ForeignKey(QuestionMultiple, on_delete=models.CASCADE)
+    option_content = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.option_content

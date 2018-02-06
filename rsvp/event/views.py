@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
-from .models import Event,Question,QuestionMultiple
+from .models import Event,Question,QuestionMultiple,Options
 from django.views import generic
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
@@ -148,14 +148,22 @@ def addOption(request):                #used for going to add options page
     pk1 = request.GET.get('p1')
     pk2 = request.GET.get('p2')
     pk3 = request.GET.get('p3')
-    shijian = Event.objects.get(id = pk1)
-    A = QuestionMultiple.objects.get(id = pk2)
-    if pk3 == A.Choice.size():
-        option = ''
-    else:
-        option = pk3
 
-    return render(request, 'event/addOption.html', context={'event_info': shijian, 'question' : A,'option': option})
+    print("Baby")
+    shijian = Event.objects.get(id = pk1)
+
+    print("Shit")
+    A = QuestionMultiple.objects.get(id = pk2)
+    print("Here")
+    if pk3 == '0' :
+        B = Options()
+        B.Multiple = A
+        B.option_content = ''
+        B.save()
+    else:
+        B = Options.objects.get(id=pk3)
+        print("There")
+    return render(request, 'event/addOption.html', context={'event_info': shijian, 'question' : A,'option' : B})
 
 def addOptionA(request):             #used for add options' submit
     pk1 = request.GET.get('p1')
@@ -164,11 +172,9 @@ def addOptionA(request):             #used for add options' submit
     if request.method == "POST":
         event = Event.objects.get(id = pk1)
         A = QuestionMultiple.objects.get(id = pk2)
-        if pk3 == A.Choice.size():
-            A.Choice.append(request.POST['option'])
-        else:
-            A.Choice[pk3]=(request.POST['option'])
-        A.save()
+        B = Options.objects.get(id = pk3)
+        B.option_content = request.POST['option']
+        B.save()
         return render(request, 'event/addMultiple.html', context={'event_info': event, 'question' : A})
     else:
         return HttpResponse("Fail to add your question")
@@ -220,4 +226,4 @@ def updateMultipleQuestion(request):
     event = Event.objects.get(id=pk1)
     pk2 = request.GET.get('p2')
     question = QuestionMultiple.objects.get(id=pk2)
-    return render(request, 'event/addMultiple.html', context={'event': event, 'question': question})
+    return render(request, 'event/addMultiple.html', context={'event_info': event, 'question': question})
