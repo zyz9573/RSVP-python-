@@ -19,10 +19,14 @@ def register(request):
 def index(request):
     return render(request,'index.html')
 
-def detail(request,pk):
+def detail(request):
     if not request.user.is_authenticated:
         return render(request,'index.html')
     else:
+        pk = request.user.id
         yonghu = realuser.objects.get(id = pk)
-        return render(request,'users/realuser.html',context={'user_info':yonghu})#HttpResponse(yonghu.username)
+        as_owner = yonghu.owner_event.all()
+        as_vendor = yonghu.vendor_event.all()
+        as_guest = yonghu.guest_event.all()
+        return render(request,'users/realuser1.html',context={'user_info':yonghu,'owner':as_owner,'vendor':as_vendor,'guest':as_guest})#HttpResponse(yonghu.username)
 

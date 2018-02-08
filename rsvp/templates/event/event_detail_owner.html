@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Homepage</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Import Bootstrap -->
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://code.jquery.com/jquery.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+   </head>
+<body>
+   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+   <div class="container-fluid">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="{% url 'index' %}">RSVP</a>
+    </div>
+    {% if user.is_authenticated %}
+      <div>
+      <ul class="nav navbar-nav navbar-right">
+         <li><a href="/users/realuser">{{user.username}}</a></li>
+      </ul>
+    </div>
+    {% else %}
+    <div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
+            <li class="active"><a href="{% url 'users:register' %}">Register</a></li>
+        </ul>
+    </div>    
+    {% endif %}
+   </div>
+   </nav>
+   <br>
+    <br>
+   <br>
+   <div class="panel panel-default">
+	<div class="panel-heading">{{event_info.event_title}}   <a href="/event/modifyevent/?p1={{event_info.id}}&p2=title"><span class="glyphicon glyphicon-pencil"></span></a></div>
+	<table class="table">
+		<tr><td>event time   <a href="/event/modifyevent/?p1={{event_info.id}}&p2=time"><span class="glyphicon glyphicon-pencil"></span></a></td><td>{{event_info.time}}</td></tr>
+		<tr><td>event place   <a href="/event/modifyevent/?p1={{event_info.id}}&p2=place"><span class="glyphicon glyphicon-pencil"></span></a></td><td>{{event_info.place}}</td></tr>
+		<tr><td>event information    <a href="/event/modifyevent/?p1={{event_info.id}}&p2=info"><span class="glyphicon glyphicon-pencil"></span></a></td><td>{{event_info.event_infor}}</td></tr>
+	</table>
+</div>
+
+<div class="btn-group" data-toggle="buttons" >
+  <label class="btn btn-primary">
+    <a href='/event/inviteowner/?p1={{event_info.id}}' style ="color:white">invite user to be owner</a>
+  </label>
+  <label class="btn btn-primary">
+  <a href='/event/invitevendor/?p1={{event_info.id}}'  style ="color:white">invite user to be vendor</a>
+  </label>
+  <label class="btn btn-primary">  
+  <a href='/event/inviteguest/?p1={{event_info.id}}'  style ="color:white">invite user to be guest</a>
+  </label>
+  <label class="btn btn-primary">  
+  <a href='/event/addmultichoicequestion/?p1={{event_info.id}}' class="button"  style ="color:white">Add Multi Choice Question</a>
+  </label>
+  <label class="btn btn-primary">
+  <a href='/event/addtextquestion/?p1={{event_info.id}}' class="button"  style ="color:white">Add Text Question</a>
+  </label>
+  <label class="btn btn-primary">
+  <a href='/event/allvendor/?p1={{event_info.id}}' class="button"  style ="color:white">Set Vendor Authority</a>
+  </label>
+</div>  
+<div>
+<table class="table">
+  <caption>questionnaire</caption>
+   <thead>
+      <tr>
+         <th>question</th>
+         <th>type</th>
+      </tr>
+   </thead>
+   <tbody>
+   {% for q in choiceq %}
+      <tr>
+         <td>{{q.question}}</td>
+         {% if q.multi_choice %}
+         <td>multi choice question</td>
+         {% else %}
+         <td>single choice question</td>
+         {% endif %}
+      </tr>
+    {% endfor %}
+    {% for q in textq %}
+      <tr>
+         <td>{{q.question}}</td>
+         <td>Text question</td>
+      </tr>
+    {% endfor %}
+   </tbody>
+</table>
+</div>
+</body>
+</html>
+  
+
+

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from .models import Event, Question
+from .models import Event,questionnaire,choicequestion,nonchoicequestion,choice,answersheet,singlechoiceanswer,multichoiceanswer,textanswer#, Question
 
 
 class EventForm(forms.ModelForm):
@@ -11,10 +11,12 @@ class EventForm(forms.ModelForm):
         fields = ['time', 'event_title', 'place', 'event_infor', 'event_logo']
 
 
+class choicequestionform(forms.ModelForm):
+	class Meta:
+		model = choicequestion
+		fields = ['question']
 
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
+class nonchoicequestionform(forms.ModelForm):
+	class Meta:
+		model = nonchoicequestion
+		fields = ['question']

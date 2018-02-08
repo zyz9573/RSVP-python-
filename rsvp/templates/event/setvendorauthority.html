@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html>
-   <head>
+<html lang="en">
+  <head>
       <title>Homepage</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <!-- Import Bootstrap -->
       <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
       <script src="https://code.jquery.com/jquery.js"></script>
       <script src="js/bootstrap.min.js"></script>
-   </head>
-   <body>
+  </head>
+  <body>
    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
    <div class="container-fluid">
     <div class="navbar-header">
@@ -17,7 +17,7 @@
     {% if user.is_authenticated %}
       <div>
       <ul class="nav navbar-nav navbar-right">
-         <li><a href="users/realuser">{{user.username}}</a></li>
+         <li><a href="/users/realuser">{{user.username}}</a></li>
          <li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
       </ul>
     </div>
@@ -31,5 +31,30 @@
     {% endif %}
    </div>
    </nav>
-   </body>
+   <br>
+    <br>
+   <br>
+
+
+<div class='text-center'>
+<h3 class='text-center'>Set {{vendor.username}} Authority</h3>
+<form action='/event/setvendorauthority/?p1={{event.id}}&p2={{vendor.id}}' method='POST'>
+{% csrf_token %}
+<ul>
+{% for q in event.questionnaire.choicequestion_set.all %}
+<li>
+<input type="checkbox" name="choicequestion" value="{{q.id}}">{{q.question}}
+</li>
+{% endfor %}
+{% for q in event.questionnaire.nonchoicequestion_set.all %}
+<li>
+<input type="checkbox" name="nonchoicequestion" value="{{q.id}}">{{q.question}}
+</li>
+</ul>
+{% endfor %}
+<br>
+<input type="submit" name="submit">
+</form>
+</div>
+</body>
 </html>

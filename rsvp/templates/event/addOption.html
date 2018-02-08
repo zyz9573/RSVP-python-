@@ -14,9 +14,9 @@
   </head>
 
   <body>
-     <form action='/event/addoptionA/?p1={{event_info.id}}&p2={{question.id}}&p3={{ option.id }}' method="post">
+     <form action='/event/addoptionA/?p1={{event_info.id}}&p2={{question.id}}' method="post">
      {% csrf_token %}
-            Option: <input type="text" name="option" value="{{ option.option_content }}"><br>
+            Option: <input type="text" name="option"><br>
         <input type ="submit" value="Submit"><br>
      </form>
   </body>
