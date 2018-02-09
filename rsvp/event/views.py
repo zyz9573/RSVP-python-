@@ -129,23 +129,32 @@ def event_detail_vendor(request):
             j=1
             for q in yonghu.choicequestion_set.all():
                 if q.multi_choice:
-                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                    answers = answersheet.multichoiceanswer_set.filter(question = q).all()
-                    ans=''
-                    for answer in answers:
-                        ans=ans+answer.choices.get().description+';'
-                    mchoicelist[j].append(ans)
+                    if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
+                        answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                        answers = answersheet.multichoiceanswer_set.filter(question = q).all()
+                        ans=''
+                        for answer in answers:
+                            ans=ans+answer.choices.get().description+';'
+                        mchoicelist[j].append(ans)
+                    else:
+                        mchoicelist[j].append("NOT ANSWER YET")
                     ++j
                 else:
-                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                    answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
-                    schoicelist[i].append(answer)  
+                    if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
+                        answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                        answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
+                        schoicelist[i].append(answer)
+                    else:
+                        schoicelist[i].append("NOT ANSWER YET")      
                     ++i                    
             i=1
             for q in yonghu.nonchoicequestion_set.all():
-                answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                answer = answersheet.textanswer_set.get(question = q).text
-                textlist[i].append(answer)
+                if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
+                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                    answer = answersheet.textanswer_set.get(question = q).text
+                    textlist[i].append(answer)
+                else:
+                    textlist[i].append("NOT ANSWER YET")
                 ++i
         return render(request,'event/event_detail_vendor.html',context={'ini':schoicelist[0],'sl':schoicelist[1:],'ml':mchoicelist[1:],'tl':textlist[1:],'event_info':shijian,'choiceq':xuanze,'textq':wenda})
     else:
@@ -491,23 +500,32 @@ def finalization(request):
             j=1
             for q in yonghu.choicequestion_set.all():
                 if q.multi_choice:
-                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                    answers = answersheet.multichoiceanswer_set.filter(question = q).all()
-                    ans=''
-                    for answer in answers:
-                        ans=ans+answer.choices.get().description+';'
-                    mchoicelist[j].append(ans)
+                    if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
+                        answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                        answers = answersheet.multichoiceanswer_set.filter(question = q).all()
+                        ans=''
+                        for answer in answers:
+                            ans=ans+answer.choices.get().description+';'
+                        mchoicelist[j].append(ans)
+                    else:
+                        mchoicelist[j].append("NOT ANSWER YET")
                     ++j
                 else:
-                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                    answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
-                    schoicelist[i].append(answer)  
+                    if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
+                        answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                        answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
+                        schoicelist[i].append(answer) 
+                    else:
+                        schoicelist[i].append("NOT ANSWER YET") 
                     ++i                    
             i=1
             for q in yonghu.nonchoicequestion_set.all():
-                answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                answer = answersheet.textanswer_set.get(question = q).text
-                textlist[i].append(answer)
+                if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
+                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                    answer = answersheet.textanswer_set.get(question = q).text
+                    textlist[i].append(answer)
+                else:
+                    textlist[i].append("NOT ANSWER YET")
                 ++i
         return render(request,'event/event_detail_vendor.html',context={'ini':schoicelist[0],'sl':schoicelist[1:],'ml':mchoicelist[1:],'tl':textlist[1:],'event_info':shijian,'choiceq':xuanze,'textq':wenda})
     else:
