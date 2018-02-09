@@ -32,7 +32,8 @@ urlpatterns = [
     path('modifychoicequestion/',views.modifychoicequestion,name='modifychoicequestion'),
 
     path('allvendor/',views.allvendor,name='allvendor'),
-    path('setvendorauthority/',views.setvendorauthority,name='setvendorauthority'),   
+    path('setvendorauthority/',views.setvendorauthority,name='setvendorauthority'),  
+    path('finalization/',views.finalization,name='finalization'), 
 ]
 """
     path('editquestion/',views.editQuestion,name='question'),

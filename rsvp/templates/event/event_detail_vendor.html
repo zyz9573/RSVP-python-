@@ -48,8 +48,16 @@
 <div class="panel panel-default">
 <div class="panel-heading">All Answer</div>
 <table class='table'>
+
+<tr>{% for elem in ini %}
+<td>
+{{elem}}
+</td>{% endfor %}
+</tr>
+
 {% for list in sl %}
 <tr>
+<td><button type="button" class="btn btn-warning"><a href = '/event/finalization/?p1={{event_info.id}}&p2={{list}}'>change</a></button></td>
 {% for elem in list %}
 <td>
 {{elem}}
@@ -58,7 +66,7 @@
 </tr>
 {% endfor%}
 {% for list in ml %}
-<tr>
+<tr><td><button type="button" class="btn btn-warning"><a href = '/event/finalization/?p1={{event_info.id}}&p2={{list}}'>change</a></button></td>
 {% for elem in list %}
 <td>
 {{elem}}
@@ -67,7 +75,7 @@
 </tr>
 {% endfor%}
 {% for list in tl %}
-<tr>
+<tr><td><button type="button" class="btn btn-warning"><a href = '/event/finalization/?p1={{event_info.id}}&p2={{list}}'>change</a></button></td>
 {% for elem in list %}
 <td>
 {{elem}}

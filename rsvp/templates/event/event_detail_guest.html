@@ -49,6 +49,7 @@
 <form action="/eventdetail/guest/?p1={{event_info.id}}" method="post">
 {% csrf_token %}
 {% for q in choiceq %}
+{% if q.is_active %}
 <p>{{q.question}}</p>
 {% if q.multi_choice %}
 {% for choice in q.choices.all %}
@@ -62,6 +63,7 @@
 <input type="radio" name="{{q.id}}" value="{{choice.id}}">{{choice.description}}
 </ul>
 {% endfor %}
+{% endif %}
 {% endif %}
 {% endfor %}
 {% for q in textq %}

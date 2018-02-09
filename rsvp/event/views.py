@@ -101,19 +101,28 @@ def event_detail_vendor(request):
     if yonghu.vendor_event.filter(id = pk).exists():
         xuanze = choicequestion.objects.filter(vendor = yonghu)
         wenda = nonchoicequestion.objects.filter(vendor = yonghu)
-        info = ["single choice question"]
+        info = ["action","state","question"]
         schoicelist = [info]
         info = ["multi choice question"]
         mchoicelist = [info]
         info = ["text question"]
         textlist = [info]
         for q in yonghu.choicequestion_set.all():
-            if q.multi_choice:
-                mchoicelist.append([q.question])
+            temp = "temp"
+            if not q.is_active:
+                temp = "finalized"
             else:
-                schoicelist.append([q.question])
+                temp = "active   "            
+            if q.multi_choice:
+                mchoicelist.append([temp,q.question])
+            else:
+                schoicelist.append([temp,q.question])
         for q in yonghu.nonchoicequestion_set.all():
-            textlist.append([q.question])
+            if not q.is_active:
+                temp = "finalized"
+            else:
+                temp = "active   " 
+            textlist.append([temp,q.question])
         for user in shijian.guest_event.all():
             schoicelist[0].append(user.username)
             i=1
@@ -138,7 +147,7 @@ def event_detail_vendor(request):
                 answer = answersheet.textanswer_set.get(question = q).text
                 textlist[i].append(answer)
                 ++i
-        return render(request,'event/event_detail_vendor.html',context={'sl':schoicelist,'ml':mchoicelist,'tl':textlist,'event_info':shijian,'choiceq':xuanze,'textq':wenda})
+        return render(request,'event/event_detail_vendor.html',context={'ini':schoicelist[0],'sl':schoicelist[1:],'ml':mchoicelist[1:],'tl':textlist[1:],'event_info':shijian,'choiceq':xuanze,'textq':wenda})
     else:
         return render(request,'users/realuser1.html')
 
@@ -153,36 +162,38 @@ def event_detail_guest(request):
             daanbiao = yonghu.answersheet_set.get(questionnaire = shijian.questionnaire)
             if request.method == "POST":
                 for q in xuanze:
-                    if q.multi_choice:
-                        if q.multi_choice_answers.exists():
-                            q.multi_choice_answers.filter(answer_sheet = daanbiao).all().delete()
-                            xid_list = request.POST.getlist(str(q.id))
-                            for xid in xid_list:
-                                duoxuandaan = multichoiceanswer.objects.create(answer_sheet = daanbiao,question=q)
-                                xuanxiang = q.choices.get(id = int(xid))
-                                xuanxiang.multi_choice_answers.add(duoxuandaan)                            
+                    if q.is_active:
+                        if q.multi_choice:
+                            if q.multi_choice_answers.exists():
+                                q.multi_choice_answers.filter(answer_sheet = daanbiao).all().delete()
+                                xid_list = request.POST.getlist(str(q.id))
+                                for xid in xid_list:
+                                    duoxuandaan = multichoiceanswer.objects.create(answer_sheet = daanbiao,question=q)
+                                    xuanxiang = q.choices.get(id = int(xid))
+                                    xuanxiang.multi_choice_answers.add(duoxuandaan)                            
+                            else:
+                                xid_list = request.POST.getlist(str(q.id))
+                                for xid in xid_list:
+                                    duoxuandaan = multichoiceanswer.objects.create(answer_sheet = daanbiao,question=q)
+                                    xuanxiang = q.choices.get(id = int(xid))
+                                    xuanxiang.multi_choice_answers.add(duoxuandaan)
                         else:
-                            xid_list = request.POST.getlist(str(q.id))
-                            for xid in xid_list:
-                                duoxuandaan = multichoiceanswer.objects.create(answer_sheet = daanbiao,question=q)
+                            if q.single_choice_answer_set.filter(answer_sheet = daanbiao).exists():
+                                xid = request.POST.get(str(q.id))
+                                xuanxiang = q.choices.get(id =int(xid))
+                                singlechoiceanswer.objects.get(answer_sheet = daanbiao,question = q).delete()
+                                singlechoiceanswer.objects.create(answer_sheet = daanbiao,question = q,choice = xuanxiang)
+                            else:
+                                xid = request.POST.get(str(q.id))
                                 xuanxiang = q.choices.get(id = int(xid))
-                                xuanxiang.multi_choice_answers.add(duoxuandaan)
-                    else:
-                        if q.single_choice_answer_set.filter(answer_sheet = daanbiao).exists():
-                            xid = request.POST.get(str(q.id))
-                            xuanxiang = q.choices.get(id =int(xid))
-                            singlechoiceanswer.objects.get(answer_sheet = daanbiao,question = q).delete()
-                            singlechoiceanswer.objects.create(answer_sheet = daanbiao,question = q,choice = xuanxiang)
-                        else:
-                            xid = request.POST.get(str(q.id))
-                            xuanxiang = q.choices.get(id = int(xid))
-                            singlechoiceanswer.objects.create(answer_sheet = daanbiao,question = q,choice = xuanxiang)
+                                singlechoiceanswer.objects.create(answer_sheet = daanbiao,question = q,choice = xuanxiang)
                 for q in wenda:
-                    if q.textanswer_set.filter(answer_sheet = daanbiao).exists():
-                        q.textanswer_set.get(answer_sheet = daanbiao,question = q).delete()
-                        textanswer.objects.create(answer_sheet = daanbiao,question = q, text = request.POST.get(str(q.id)))
-                    else:
-                        textanswer.objects.create(answer_sheet = daanbiao,question = q, text = request.POST.get(str(q.id)))
+                    if q.is_active:
+                        if q.textanswer_set.filter(answer_sheet = daanbiao).exists():
+                            q.textanswer_set.get(answer_sheet = daanbiao,question = q).delete()
+                            textanswer.objects.create(answer_sheet = daanbiao,question = q, text = request.POST.get(str(q.id)))
+                        else:
+                            textanswer.objects.create(answer_sheet = daanbiao,question = q, text = request.POST.get(str(q.id)))
             return render(request,'event/event_detail_guest.html',context={'event_info':shijian,'choiceq':xuanze,'textq':wenda,'daanbiao':daanbiao})
         else:
             #corrospond answer sheet doesn' texist yet
@@ -429,6 +440,79 @@ def setvendorauthority(request):
             return render(request,'event/setvendorauthority.html',context={'event':shijian,'vendor':vendor})
     else:
         return render(request,'event/event_detail_owner.html',context={'event_info':shijian,'choiceq':xuanze,'textq':wenda})
+
+def finalization(request):
+    pk = request.GET.get('p1')
+    li = request.GET.get('p2')
+    qn = li.split(',')[1]
+    #
+    qn = str(qn[2:len(qn)-1])
+    
+    yonghu = realuser.objects.get(id = request.user.id)
+    shijian = Event.objects.get(id = pk)
+    if yonghu.vendor_event.filter(id = pk).exists():
+        xuanze = choicequestion.objects.filter(vendor = yonghu)
+        wenda = nonchoicequestion.objects.filter(vendor = yonghu)
+        if choicequestion.objects.filter(question = qn,vendor = yonghu).exists():
+            temp = choicequestion.objects.get(question = qn,vendor = yonghu)
+            temp.is_active = not temp.is_active
+            temp.save()
+        elif nonchoicequestion.objects.filter(question = qn,vendor = yonghu).exists():
+            temp = nonchoicequestion.objects.get(question = qn,vendor = yonghu)
+            temp.is_active = not temp.is_active
+            temp.save()
+#        else:
+#            return HttpResponse("sth wrong")            
+        info = ["action","state","question"]
+        schoicelist = [info]
+        info = ["multi choice question"]
+        mchoicelist = [info]
+        info = ["text question"]
+        textlist = [info]
+        for q in yonghu.choicequestion_set.all():
+            temp = "temp"
+            if not q.is_active:
+                temp = "finalized"
+            else:
+                temp = "active   "            
+            if q.multi_choice:
+                mchoicelist.append([temp,q.question])
+            else:
+                schoicelist.append([temp,q.question])
+        for q in yonghu.nonchoicequestion_set.all():
+            if not q.is_active:
+                temp = "finalized"
+            else:
+                temp = "active   " 
+            textlist.append([temp,q.question])
+        for user in shijian.guest_event.all():
+            schoicelist[0].append(user.username)
+            i=1
+            j=1
+            for q in yonghu.choicequestion_set.all():
+                if q.multi_choice:
+                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                    answers = answersheet.multichoiceanswer_set.filter(question = q).all()
+                    ans=''
+                    for answer in answers:
+                        ans=ans+answer.choices.get().description+';'
+                    mchoicelist[j].append(ans)
+                    ++j
+                else:
+                    answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                    answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
+                    schoicelist[i].append(answer)  
+                    ++i                    
+            i=1
+            for q in yonghu.nonchoicequestion_set.all():
+                answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
+                answer = answersheet.textanswer_set.get(question = q).text
+                textlist[i].append(answer)
+                ++i
+        return render(request,'event/event_detail_vendor.html',context={'ini':schoicelist[0],'sl':schoicelist[1:],'ml':mchoicelist[1:],'tl':textlist[1:],'event_info':shijian,'choiceq':xuanze,'textq':wenda})
+    else:
+        return render(request,'users/realuser1.html')
+
 
 """
 def addQuestion(request):
