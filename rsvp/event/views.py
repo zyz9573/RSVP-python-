@@ -96,8 +96,8 @@ def event_detail_owner(request):
 
 def event_detail_vendor(request):
     pk = request.GET.get('p1')
-    yonghu = realuser.objects.get(id = request.user.id)
-    shijian = Event.objects.get(id = pk)
+    yonghu = realuser.objects.get(id = request.user.id)#current login user
+    shijian = Event.objects.get(id = pk)#current event
     if yonghu.vendor_event.filter(id = pk).exists():
         xuanze = choicequestion.objects.filter(vendor = yonghu)
         wenda = nonchoicequestion.objects.filter(vendor = yonghu)
@@ -107,7 +107,7 @@ def event_detail_vendor(request):
         mchoicelist = [info]
         info = ["text question"]
         textlist = [info]
-        for q in yonghu.choicequestion_set.all():
+        for q in yonghu.choicequestion_set.filter(questionnaire = shijian.questionnaire).all():
             temp = "temp"
             if not q.is_active:
                 temp = "finalized"
@@ -117,7 +117,7 @@ def event_detail_vendor(request):
                 mchoicelist.append([temp,q.question])
             else:
                 schoicelist.append([temp,q.question])
-        for q in yonghu.nonchoicequestion_set.all():
+        for q in yonghu.nonchoicequestion_set.filter(questionnaire = shijian.questionnaire).all():
             if not q.is_active:
                 temp = "finalized"
             else:
@@ -127,7 +127,7 @@ def event_detail_vendor(request):
             schoicelist[0].append(user.username)
             i=1
             j=1
-            for q in yonghu.choicequestion_set.all():
+            for q in yonghu.choicequestion_set.filter(questionnaire = shijian.questionnaire).all():
                 if q.multi_choice:
                     if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
                         answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
@@ -142,17 +142,19 @@ def event_detail_vendor(request):
                 else:
                     if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
                         answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                        answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
-                        schoicelist[i].append(answer)
+                        if answersheet.singlechoiceanswer_set.filter(question = q).exists():
+                            answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description    
+                            schoicelist[i].append(answer)
                     else:
                         schoicelist[i].append("NOT ANSWER YET")      
                     ++i                    
             i=1
-            for q in yonghu.nonchoicequestion_set.all():
+            for q in yonghu.nonchoicequestion_set.filter(questionnaire = shijian.questionnaire).all():
                 if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
                     answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                    answer = answersheet.textanswer_set.get(question = q).text
-                    textlist[i].append(answer)
+                    if answersheet.textanswer_set.filter(question = q).exists():
+                        answer = answersheet.textanswer_set.get(question = q).text
+                        textlist[i].append(answer)
                 else:
                     textlist[i].append("NOT ANSWER YET")
                 ++i
@@ -478,7 +480,7 @@ def finalization(request):
         mchoicelist = [info]
         info = ["text question"]
         textlist = [info]
-        for q in yonghu.choicequestion_set.all():
+        for q in yonghu.choicequestion_set.filter(questionnaire=shijian.questionnaire).all():
             temp = "temp"
             if not q.is_active:
                 temp = "finalized"
@@ -488,7 +490,7 @@ def finalization(request):
                 mchoicelist.append([temp,q.question])
             else:
                 schoicelist.append([temp,q.question])
-        for q in yonghu.nonchoicequestion_set.all():
+        for q in yonghu.nonchoicequestion_set.filter(questionnaire=shijian.questionnaire).all():
             if not q.is_active:
                 temp = "finalized"
             else:
@@ -498,32 +500,35 @@ def finalization(request):
             schoicelist[0].append(user.username)
             i=1
             j=1
-            for q in yonghu.choicequestion_set.all():
+            for q in yonghu.choicequestion_set.filter(questionnaire=shijian.questionnaire).all():
                 if q.multi_choice:
                     if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
                         answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                        answers = answersheet.multichoiceanswer_set.filter(question = q).all()
-                        ans=''
-                        for answer in answers:
-                            ans=ans+answer.choices.get().description+';'
-                        mchoicelist[j].append(ans)
+                        if answersheet.multichoiceanswer_set.filter(question = q).exists():
+                            answers = answersheet.multichoiceanswer_set.filter(question = q).all()
+                            ans=''
+                            for answer in answers:
+                                ans=ans+answer.choices.get().description+';'
+                            mchoicelist[j].append(ans)
                     else:
                         mchoicelist[j].append("NOT ANSWER YET")
                     ++j
                 else:
                     if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
                         answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                        answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
-                        schoicelist[i].append(answer) 
+                        if answersheet.singlechoiceanswer_set.filter(question = q).exists():
+                            answer = answersheet.singlechoiceanswer_set.get(question = q).choice.description
+                            schoicelist[i].append(answer) 
                     else:
                         schoicelist[i].append("NOT ANSWER YET") 
                     ++i                    
             i=1
-            for q in yonghu.nonchoicequestion_set.all():
+            for q in yonghu.nonchoicequestion_set.filter(questionnaire=shijian.questionnaire).all():
                 if user.answersheet_set.filter(questionnaire=shijian.questionnaire).exists():
                     answersheet = user.answersheet_set.get(questionnaire=shijian.questionnaire)
-                    answer = answersheet.textanswer_set.get(question = q).text
-                    textlist[i].append(answer)
+                    if answersheet.textanswer_set.filter(question = q).exists():
+                        answer = answersheet.textanswer_set.get(question = q).text
+                        textlist[i].append(answer)
                 else:
                     textlist[i].append("NOT ANSWER YET")
                 ++i
