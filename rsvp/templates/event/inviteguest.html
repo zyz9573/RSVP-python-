@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Invite</title>
+    <link rel="stylesheet" href="https://unpkg.com/mobi.css/dist/mobi.min.css">
+    <style>
+      .errorlist {
+      color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <form class="form" action="/event/inviteguest/?p1={{id}}" method="post">
+      {% csrf_token %}
+      <input type=text name='invite_username'>username</input>
+      <button type="submit" class="btn btn-primary btn-block">invite</button>
+    </form>
+  </body>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>Homepage</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Import Bootstrap -->
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://code.jquery.com/jquery.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    {% if event_info.question_set %}
+    <ul>
+    {% for question in event_info.question_set.all %}
+           <li> {{question.question_content}} </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    <h3>New Question's Type:</h3>
+    <a href="/event/add_one/?p1={{event_info.id}}" class="button">Multiple Choice</a>
+    <a href="/event/add_two/?p1={{event_info.id}}" class="button">Test Response</a>
+ </body>
