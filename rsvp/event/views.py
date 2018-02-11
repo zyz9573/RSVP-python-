@@ -285,7 +285,7 @@ def addmultichoicequestion(request):
         form = choicequestionform();
         if shijian.guest_event.exists():
             subject = 'Email notification from RSVP'
-            message = shijian.event_title +'has added new question, please check'
+            message = shijian.event_title +' has added new question, please check'
             recipient = []
             for user in shijian.guest_event.all():
                 recipient.append(user.email)
@@ -314,7 +314,7 @@ def addtextquestion(request):
         form = nonchoicequestionform();
         if shijian.guest_event.exists():
             subject = 'Email notification from RSVP'
-            message = shijian.event_title +'has added new question, please check'
+            message = shijian.event_title +' has added new question, please check'
             recipient = []
             for user in shijian.guest_event.all():
                 recipient.append(user.email)
@@ -341,7 +341,7 @@ def editevent(request):
             shijian.event_infor = request.POST.get('cd')
         shijian.save()
         subject = 'Email notification from RSVP'
-        message = shijian.event_title +'has changed, please check'
+        message = shijian.event_title +' has changed, please check'
         from_mail = 'panjoyzhang95@gmail.com'
         recipient = []
         for user in shijian.guest_event.all():
@@ -417,9 +417,9 @@ def modifychoice(request):
     xuanxiang = choice.objects.get(id =pk)
     xuanxiang.description = request.POST.get("cd")
     xuanxiang.save()
-    shijian = choice.question.questionnaire.event.all()[0]
+    shijian = choice.question.questionnaire.event
     subject = 'Email notification from RSVP'
-    message = shijian.event_title +'has changed, please check'
+    message = shijian.event_title +' has changed, please check'
     recipient = []
     for user in shijian.guest_event.all():
         recipient.append(user.email)
@@ -442,7 +442,7 @@ def modifytext(request):
         textquestion.question = request.POST.get("cd")
         textquestion.save()
         subject = 'Email notification from RSVP'
-        message = shijian.event_title +'has changed, please check'
+        message = shijian.event_title +' has changed, please check'
         recipient = []
         for user in shijian.guest_event.all():
             recipient.append(user.email)
@@ -457,9 +457,9 @@ def modifychoicequestion(request):
     if request.method == 'POST':
         choiceq.question = request.POST.get("cd")
         choiceq.save()
-        shijian = choiceq.questionnaire.event.all()[0]
+        shijian = choiceq.questionnaire.event
         subject = 'Email notification from RSVP'
-        message = shijian.event_title +'has changed, please check'
+        message = shijian.event_title +' has changed, please check'
         recipient = []
         for user in shijian.guest_event.all():
             recipient.append(user.email)
