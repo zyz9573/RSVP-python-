@@ -125,3 +125,8 @@ STATIC_URL = '/static/'
 
 #self setting
 AUTH_USER_MODEL = 'users.realuser'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'panjoyzhang95@gmail.com'
+EMAIL_HOST_PASSWORD = 'wo+you=2018'

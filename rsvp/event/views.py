@@ -6,6 +6,7 @@ from .models import Event,questionnaire,choicequestion,nonchoicequestion,choice,
 from django.views import generic
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
+from django.core.mail import send_mail
 from .form import EventForm, choicequestionform,nonchoicequestionform
 class IndexView(generic.ListView):
     template_name = 'event/index.html'
@@ -220,8 +221,11 @@ def inviteowner(request):
         shijian = Event.objects.get(id = pk)
         xuanze = choicequestion.objects.filter(questionnaire = shijian.questionnaire).all()
         wenda = nonchoicequestion.objects.filter(questionnaire = shijian.questionnaire).all()
-        yonghu = realuser.objects.get(username = request.POST['invite_username'])
-        yonghu.owner_event.add(shijian)
+        if realuser.objects.filter(username = request.POST['invite_username']):
+            yonghu = realuser.objects.get(username = request.POST['invite_username'])
+            yonghu.owner_event.add(shijian)
+        else:
+            return HttpResponse("NO SUCH USER")
         return render(request,'event/event_detail_owner.html',context={'event_info':shijian,'choiceq':xuanze,'textq':wenda})
     else:
         return render(request,'event/inviteowner.html',context={'id':pk})
@@ -232,8 +236,11 @@ def invitevendor(request):
         shijian = Event.objects.get(id = pk)
         xuanze = choicequestion.objects.filter(questionnaire = shijian.questionnaire).all()
         wenda = nonchoicequestion.objects.filter(questionnaire = shijian.questionnaire).all()
-        yonghu = realuser.objects.get(username = request.POST['invite_username'])
-        yonghu.vendor_event.add(shijian)
+        if realuser.objects.filter(username = request.POST['invite_username']):
+            yonghu = realuser.objects.get(username = request.POST['invite_username'])
+            yonghu.vendor_event.add(shijian)
+        else:
+            return HttpResponse("NO SUCH USER")
         return render(request,'event/event_detail_owner.html',context={'event_info':shijian,'choiceq':xuanze,'textq':wenda})
     else:
         return render(request,'event/invitevendor.html',context={'id':pk})
@@ -244,8 +251,11 @@ def inviteguest(request):
         shijian = Event.objects.get(id = pk)
         xuanze = choicequestion.objects.filter(questionnaire = shijian.questionnaire).all()
         wenda = nonchoicequestion.objects.filter(questionnaire = shijian.questionnaire).all()
-        yonghu = realuser.objects.get(username = request.POST['invite_username'])
-        yonghu.guest_event.add(shijian)
+        if realuser.objects.filter(username = request.POST['invite_username']):
+            yonghu = realuser.objects.get(username = request.POST['invite_username'])
+            yonghu.guest_event.add(shijian)
+        else:
+            return HttpResponse("NO SUCH USER")
         return render(request,'event/event_detail_owner.html',context={'event_info':shijian,'choiceq':xuanze,'textq':wenda})
     else:
         return render(request,'event/inviteguest.html',context={'id':pk})
@@ -273,6 +283,13 @@ def addmultichoicequestion(request):
         temp.question=request.POST.get('question')
         temp.save()
         form = choicequestionform();
+        if shijian.guest_event.exists():
+            subject = 'Email notification from RSVP'
+            message = shijian.event_title +'has added new question, please check'
+            recipient = []
+            for user in shijian.guest_event.all():
+                recipient.append(user.email)
+            send_mail(subject,message,'panjoyzhang95@gmail.com',recipient)
         return render(request,'event/amcq.html',context={'questionnaire': wenjuan,'choiceq':xuanze,'nonchoiceq':wenda,'event':shijian,'form':form,'flag':flag})
     else:
         form = choicequestionform();
@@ -295,6 +312,13 @@ def addtextquestion(request):
         temp.question=request.POST.get('question')
         temp.save()
         form = nonchoicequestionform();
+        if shijian.guest_event.exists():
+            subject = 'Email notification from RSVP'
+            message = shijian.event_title +'has added new question, please check'
+            recipient = []
+            for user in shijian.guest_event.all():
+                recipient.append(user.email)
+            send_mail(subject,message,'panjoyzhang95@gmail.com',recipient)
         return render(request,'event/amcq.html',context={'questionnaire': wenjuan,'choiceq':xuanze,'nonchoiceq':wenda,'event':shijian,'form':form,'flag':flag})
     else:
         form = nonchoicequestionform();
@@ -316,6 +340,13 @@ def editevent(request):
         elif flag == 'info':
             shijian.event_infor = request.POST.get('cd')
         shijian.save()
+        subject = 'Email notification from RSVP'
+        message = shijian.event_title +'has changed, please check'
+        from_mail = 'panjoyzhang95@gmail.com'
+        recipient = []
+        for user in shijian.guest_event.all():
+            recipient.append(user.email)
+        send_mail(subject,message,from_mail,recipient)
         return render(request,'event/event_detail_owner.html',context={'event_info':shijian,'choiceq':xuanze,'textq':wenda})        
     else:
         return render(request, 'event/modifyevent.html',context={'flag':flag,'event':shijian})
@@ -386,6 +417,13 @@ def modifychoice(request):
     xuanxiang = choice.objects.get(id =pk)
     xuanxiang.description = request.POST.get("cd")
     xuanxiang.save()
+    shijian = choice.question.questionnaire.event.all()[0]
+    subject = 'Email notification from RSVP'
+    message = shijian.event_title +'has changed, please check'
+    recipient = []
+    for user in shijian.guest_event.all():
+        recipient.append(user.email)
+    send_mail(subject,message,'panjoyzhang95@gmail.com',recipient)
     duoxuan=xuanxiang.question
     action='no'
     return render(request,'event/emcq.html',context={'question':duoxuan,'action':action})
@@ -403,6 +441,12 @@ def modifytext(request):
     if request.method == 'POST':
         textquestion.question = request.POST.get("cd")
         textquestion.save()
+        subject = 'Email notification from RSVP'
+        message = shijian.event_title +'has changed, please check'
+        recipient = []
+        for user in shijian.guest_event.all():
+            recipient.append(user.email)
+        send_mail(subject,message,'panjoyzhang95@gmail.com',recipient)
         return render(request,'event/amcq.html',context={'questionnaire': wenjuan,'choiceq':xuanze,'nonchoiceq':wenda,'event':shijian,'form':form,'flag':flag})
     else:
         return render(request,'event/modifytext.html',context={'event':shijian,'textq':textquestion})
@@ -413,6 +457,13 @@ def modifychoicequestion(request):
     if request.method == 'POST':
         choiceq.question = request.POST.get("cd")
         choiceq.save()
+        shijian = choiceq.questionnaire.event.all()[0]
+        subject = 'Email notification from RSVP'
+        message = shijian.event_title +'has changed, please check'
+        recipient = []
+        for user in shijian.guest_event.all():
+            recipient.append(user.email)
+        send_mail(subject,message,'panjoyzhang95@gmail.com',recipient)
         if choicequestion.multi_choice:
             return render(request,'event/emcq.html',context={'question':choiceq,'action':action})
         else:
