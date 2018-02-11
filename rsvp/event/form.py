@@ -8,7 +8,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['time', 'event_title', 'place', 'event_infor', 'event_logo']
+        fields = ['time', 'event_title', 'place', 'event_infor', 'canaddone']
 
 
 class choicequestionform(forms.ModelForm):

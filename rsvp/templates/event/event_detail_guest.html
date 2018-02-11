@@ -45,6 +45,11 @@
    <br>
    <br>
 <div class='text-center'>
+{% if event_info.canaddone %}
+<button type="button" class="btn btn-default" ">add one</button>
+{% else %}
+<button type="button" class="btn btn-default" disabled="disabled">add one</button>
+{% endif %}
 <form action="/eventdetail/guest/?p1={{event_info.id}}" method="post">
 {% csrf_token %}
 {% for q in choiceq %}
