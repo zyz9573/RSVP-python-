@@ -27,7 +27,7 @@ SECRET_KEY = '%03(vk5@hv-vbw+ymu$=^y#(x4bq9i%84g=f@oj!azo+-hz-4i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vcm-182.vm.duke.edu']
 
 
 # Application definition
@@ -127,6 +127,6 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'users.realuser'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_PORT = 587
+EMAIL_PORT = 587
 EMAIL_HOST_USER = 'panjoyzhang95@gmail.com'
 EMAIL_HOST_PASSWORD = 'wo+you=2018'
